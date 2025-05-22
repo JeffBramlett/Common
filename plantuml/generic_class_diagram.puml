@@ -1,0 +1,107 @@
+@startuml Generic Namespace Class Diagram
+
+skinparam classAttributeIconSize 0
+
+interface IDelegateMessageBus {
+  +Subscribe<T>(Action<T> handler): void
+  +Publish<T>(T message): void
+}
+
+class DelegateMessageBus {
+  -_handlers: Dictionary<Type, List<Delegate>>
+  +Subscribe<T>(Action<T> handler): void
+  +Publish<T>(T message): void
+}
+
+interface IGenericSpooler<T> {
+  +Start(): void
+  +Stop(): void
+  +Add(T item): void
+  +SpoolerStopped: event EventHandler
+  +ItemProcessed: event EventHandler<T>
+}
+
+class GenericSpooler<T> {
+  -_queue: Queue<T>
+  -_processor: Action<T>
+  -_isRunning: bool
+  -_thread: Thread
+  +Start(): void
+  +Stop(): void
+  +Add(T item): void
+  +SpoolerStopped: event EventHandler
+  +ItemProcessed: event EventHandler<T>
+}
+
+interface IPersistentBuffer<T> {
+  +Add(T item): void
+  +GetNext(): T
+  +Count: int
+  +Information: event EventHandler<PersistentBufferInformationEventArgs>
+  +Warning: event EventHandler<PersistentBufferWarningEventArgs>
+  +Exception: event EventHandler<PersistentBufferExceptionEventArgs>
+}
+
+class PersistentBuffer<T> {
+  -_queue: Queue<T>
+  -_filePath: string
+  -_maxSize: int
+  +Add(T item): void
+  +GetNext(): T
+  +Count: int
+  +Information: event EventHandler<PersistentBufferInformationEventArgs>
+  +Warning: event EventHandler<PersistentBufferWarningEventArgs>
+  +Exception: event EventHandler<PersistentBufferExceptionEventArgs>
+}
+
+class PersistentBufferInformationEventArgs {
+  +Message: string
+}
+
+class PersistentBufferWarningEventArgs {
+  +Message: string
+}
+
+class PersistentBufferExceptionEventArgs {
+  +Message: string
+  +Exception: Exception
+}
+
+interface ISlidingTimer {
+  +Start(): void
+  +Stop(): void
+  +Elapsed: event EventHandler
+}
+
+class SlidingTimer {
+  -_timer: Timer
+  -_interval: int
+  -_isRunning: bool
+  +Start(): void
+  +Stop(): void
+  +Elapsed: event EventHandler
+}
+
+interface IServiceLoader {
+  +LoadServices<T>(): IEnumerable<T>
+}
+
+class GenericServiceLoader {
+  +LoadServices<T>(): IEnumerable<T>
+}
+
+class DynamicServiceAttribute {
+  +Name: string
+}
+
+IDelegateMessageBus <|.. DelegateMessageBus
+IGenericSpooler <|.. GenericSpooler
+IPersistentBuffer <|.. PersistentBuffer
+ISlidingTimer <|.. SlidingTimer
+IServiceLoader <|.. GenericServiceLoader
+
+PersistentBuffer --> PersistentBufferInformationEventArgs
+PersistentBuffer --> PersistentBufferWarningEventArgs
+PersistentBuffer --> PersistentBufferExceptionEventArgs
+
+@enduml

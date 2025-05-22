@@ -1,0 +1,26 @@
+@startuml Extensions Namespace Class Diagram
+
+skinparam classAttributeIconSize 0
+
+class ListExtensions {
+  +{static} ApplyAction<T>(this IList<T> collection, Action<T> actionToTakeOnEach, int throttleSize): Task<bool>
+  +{static} ApplyFunction<I, R>(this IList<I> collection, Func<I, R> funcToTakeOnEach, int throttleSize): Task<IList<R>>
+}
+
+class ObjectExtensions {
+  +{static} GetPropertyValue(this object obj, string propertyName): object
+  +{static} SetPropertyValue(this object obj, string propertyName, object value): void
+  +{static} HasProperty(this object obj, string propertyName): bool
+}
+
+note bottom of ListExtensions
+  Provides extension methods for IList<T> to apply
+  actions or functions to collection items in parallel
+end note
+
+note bottom of ObjectExtensions
+  Provides extension methods for objects to get/set
+  property values using reflection
+end note
+
+@enduml

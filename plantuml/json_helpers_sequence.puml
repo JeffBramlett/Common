@@ -1,0 +1,56 @@
+@startuml JsonHelpers Serialization Sequence Diagram
+
+actor Client
+participant "JsonHelpers" as JH
+participant "JsonConvert\n(Newtonsoft.Json)" as JC
+participant "File System" as FS
+
+== Serialization ==
+
+Client -> JH : Serialize<T>(obj)
+activate JH
+JH -> JC : SerializeObject(obj)
+activate JC
+JC --> JH : json string
+deactivate JC
+JH --> Client : json string
+deactivate JH
+
+Client -> JH : SerializeToFile<T>(obj, filePath)
+activate JH
+JH -> JC : SerializeObject(obj)
+activate JC
+JC --> JH : json string
+deactivate JC
+JH -> FS : File.WriteAllText(filePath, json)
+activate FS
+FS --> JH : void
+deactivate FS
+JH --> Client : void
+deactivate JH
+
+== Deserialization ==
+
+Client -> JH : Deserialize<T>(json)
+activate JH
+JH -> JC : DeserializeObject<T>(json)
+activate JC
+JC --> JH : object of type T
+deactivate JC
+JH --> Client : object of type T
+deactivate JH
+
+Client -> JH : DeserializeFromFile<T>(filePath)
+activate JH
+JH -> FS : File.ReadAllText(filePath)
+activate FS
+FS --> JH : json string
+deactivate FS
+JH -> JC : DeserializeObject<T>(json)
+activate JC
+JC --> JH : object of type T
+deactivate JC
+JH --> Client : object of type T
+deactivate JH
+
+@enduml
