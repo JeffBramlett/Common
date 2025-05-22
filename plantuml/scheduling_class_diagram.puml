@@ -1,0 +1,96 @@
+@startuml Scheduling Namespace Class Diagram
+
+skinparam classAttributeIconSize 0
+
+interface IScheduleBase {
+  +Name: string
+  +Description: string
+  +IsActive: bool
+  +StartTime: DateTime
+  +EndTime: DateTime
+  +Interval: TimeSpan
+  +LastRunTime: DateTime
+  +NextRunTime: DateTime
+  +CalculateNextRunTime(): DateTime
+}
+
+interface IScheduleItem {
+  +Execute(): void
+  +Completed: event EventHandler<ScheduleItemCompletedEventArgs>
+}
+
+interface IScheduler {
+  +Start(): void
+  +Stop(): void
+  +AddScheduleItem(IScheduleItem item): void
+  +RemoveScheduleItem(IScheduleItem item): void
+  +ScheduledTimeReached: event EventHandler<ScheduledTimeReachedEventArgs>
+  +SchedulerEnded: event EventHandler<SchedulerEndedEventArgs>
+}
+
+abstract class ScheduleBase {
+  #_name: string
+  #_description: string
+  #_isActive: bool
+  #_startTime: DateTime
+  #_endTime: DateTime
+  #_interval: TimeSpan
+  #_lastRunTime: DateTime
+  #_nextRunTime: DateTime
+  +Name: string
+  +Description: string
+  +IsActive: bool
+  +StartTime: DateTime
+  +EndTime: DateTime
+  +Interval: TimeSpan
+  +LastRunTime: DateTime
+  +NextRunTime: DateTime
+  +CalculateNextRunTime(): DateTime
+}
+
+class ScheduleItem {
+  -_scheduleBase: IScheduleBase
+  -_action: Action
+  +ScheduleBase: IScheduleBase
+  +Execute(): void
+  +Completed: event EventHandler<ScheduleItemCompletedEventArgs>
+}
+
+class Scheduler {
+  -_timer: Timer
+  -_scheduleItems: List<IScheduleItem>
+  -_isRunning: bool
+  +Start(): void
+  +Stop(): void
+  +AddScheduleItem(IScheduleItem item): void
+  +RemoveScheduleItem(IScheduleItem item): void
+  +ScheduledTimeReached: event EventHandler<ScheduledTimeReachedEventArgs>
+  +SchedulerEnded: event EventHandler<SchedulerEndedEventArgs>
+}
+
+class ScheduleItemCompletedEventArgs {
+  +ScheduleItem: IScheduleItem
+  +CompletionTime: DateTime
+}
+
+class ScheduledTimeReachedEventArgs {
+  +ScheduleItem: IScheduleItem
+  +ScheduledTime: DateTime
+}
+
+class SchedulerEndedEventArgs {
+  +EndTime: DateTime
+}
+
+IScheduleBase <|.. ScheduleBase
+IScheduleItem <|.. ScheduleItem
+IScheduler <|.. Scheduler
+
+ScheduleItem --> IScheduleBase
+Scheduler --> IScheduleItem
+
+ScheduleItem --> ScheduleItemCompletedEventArgs
+Scheduler --> ScheduledTimeReachedEventArgs
+Scheduler --> SchedulerEndedEventArgs
+
+@enduml

@@ -1,0 +1,28 @@
+@startuml Serialization Namespace Class Diagram
+
+skinparam classAttributeIconSize 0
+
+class JsonHelpers {
+  +{static} Serialize<T>(T obj): string
+  +{static} Deserialize<T>(string json): T
+  +{static} DeserializeFromFile<T>(string filePath): T
+  +{static} SerializeToFile<T>(T obj, string filePath): void
+}
+
+class JsonUtils {
+  +{static} GetRootToken(string json): JToken
+  +{static} GetTokenValue<T>(JToken token, string path): T
+  +{static} GetTokenJson(JToken token, string path): string
+}
+
+note bottom of JsonHelpers
+  Provides serialization and deserialization 
+  functionality using Newtonsoft.Json
+end note
+
+note bottom of JsonUtils
+  Provides utility methods for working with 
+  JToken objects from Newtonsoft.Json.Linq
+end note
+
+@enduml

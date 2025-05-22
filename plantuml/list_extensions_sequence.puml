@@ -1,0 +1,41 @@
+@startuml ListExtensions.ApplyAction Sequence Diagram
+
+actor Client
+participant "ListExtensions" as LE
+participant "Task" as T
+participant "CancellationTokenSource" as CTS
+
+Client -> LE : ApplyAction(collection, action, throttleSize)
+activate LE
+
+LE -> LE : Validate parameters
+note right: Throws ArgumentNullException if any parameter is invalid
+
+LE -> LE : Calculate initial batch size
+note right: diffSize = min(collection.Count, throttleSize)
+
+loop while diffSize > 0
+    LE -> CTS : new CancellationTokenSource()
+    activate CTS
+    
+    LE -> LE : Create Task array[diffSize]
+    
+    loop for each item in current batch
+        LE -> T : Task.Run(() => action(item), token)
+        activate T
+    end
+    
+    LE -> T : Task.WhenAll(tasks)
+    note right: Waits for all tasks in current batch to complete
+    deactivate T
+    
+    LE -> LE : Update position and calculate next batch size
+    note right: pos += diffSize\ndiffSize = min(throttleSize, count - pos)
+    
+    deactivate CTS
+end
+
+LE --> Client : return true
+deactivate LE
+
+@enduml

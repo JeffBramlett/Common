@@ -1,0 +1,54 @@
+@startuml Common Library Package Diagram
+
+skinparam packageStyle rectangle
+
+package "Common" {
+  [IConfigurationManager]
+  [DefaultConfigruationManager]
+  
+  package "Extensions" {
+    [ListExtensions]
+    [ObjectExtensions]
+  }
+  
+  package "Generic" {
+    [DelegateMessageBus]
+    [GenericServiceLoader]
+    [GenericSpooler]
+    [PersistentBuffer]
+    [SlidingTimer]
+    [DynamicServiceAttribute]
+    [Interfaces] as GenericInterfaces
+  }
+  
+  package "Helpers" {
+    [CertificateHelper]
+  }
+  
+  package "Scheduling" {
+    [ScheduleBase]
+    [ScheduleItem]
+    [Scheduler]
+    [EventArgs] as SchedulingEventArgs
+    [Interfaces] as SchedulingInterfaces
+  }
+  
+  package "Serialization" {
+    [JsonHelpers]
+    [JsonUtils]
+  }
+  
+  package "Validation" {
+    [ValidationResult]
+  }
+}
+
+package "Common.Tests" {
+  [JsonHelpersTests]
+  [JsonUtilsTests]
+  [ListExtensionsTests]
+}
+
+Common.Tests --> Common : tests
+
+@enduml
